@@ -4,11 +4,11 @@ import csv
 from http.client import RemoteDisconnected
 
 HEADERS = {'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'}
-HOST = 'https://www.cbsnews.com'
-TOPICS = ['/latest/world']
+HOST = 'https://www.bbc.com'
+TOPICS = ['/news/world/us_and_canada', '/news/world/middle_east', '/news/world/latin_america', '/news/world/europe', '/news/world/australia', '/news/world/asia', '/news/world/africa', '/news/world']
     # ['/regions/oceania-region/', '/regions/central-asia/', '/regions/east-asia/', '/regions/south-asia/', '/regions/southeast-asia/', '/topics/security/', '/topics/politics/', '/topics/diplomacy/', '/topics/economy/', '/topics/society/', '/topics/environment/']
 # URL = 'https://thediplomat.com/regions/central-asia/'
-FILE = 'cbsnews.csv'
+FILE = 'bbc.csv'
 
 def save_file(items, path):
     with open(path, 'a', newline='') as file:
@@ -22,7 +22,7 @@ def get_text_on_page(url):
 
     soup = BeautifulSoup(html.text, 'html.parser')
     try:
-        text = soup.find('section', class_='content__body').get_text(strip=True).replace(',','').replace('--', '')
+        text = soup.find('article', class_='e1nh2i2l6').get_text(strip=True).replace(',','').replace('--', '')
     except:
         text = None
         print('text is none')
@@ -37,24 +37,27 @@ def get_pages_count(html):
     soup = BeautifulSoup(html, 'html.parser')
     # pagination = soup.find('div', class_='field__item').get_text()
     # page = pagination.find().get_text()#.replace('Page 1 of ', '')
-    return 25#int(pagination)
+    return 1#int(pagination)
 
 def get_content(html):
     soup = BeautifulSoup(html, 'html.parser')
-    items = soup.find_all('article', class_='item--topic-world')
+    items = soup.find_all('li', class_='lx-stream__post-container')
     # print(len(items))
     name = []
     for item in items:
-        #title = item.find('span', class_='field-content')
-        link = str(item.find('a', class_='item__anchor').get('href'))
-        # print(link)
+        try:
+            href = item.find('a', class_='qa-heading-link').get('href')
+        except:
+            continue
+        link = str(HOST + href)
+        print(link)
         text = get_text_on_page(link)
         if text == None:
             continue
         else:
             name.append({
                 'text': text,
-                'title': item.find('h4', class_='item__hed').get_text(strip=True).replace(',', ''),
+                'title': item.find('a', class_='qa-heading-link').get_text(strip=True).replace(',', ''),
                 'host': HOST,
                 'link': link,
                 'owner': 'mindset',
