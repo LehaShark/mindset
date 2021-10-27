@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import csv
 from http.client import RemoteDisconnected
 
-TOPICS = ['/regions/central-asia/', '/regions/east-asia/', '/regions/oceania-region/', '/regions/south-asia/', '/regions/southeast-asia/', '/topics/security/', '/topics/politics/', '/topics/diplomacy/', '/topics/economy/', '/topics/society/', '/topics/environment/']
-URL = 'https://thediplomat.com/regions/central-asia/'
+TOPICS = ['/regions/oceania-region/', '/regions/central-asia/', '/regions/east-asia/', '/regions/south-asia/', '/regions/southeast-asia/', '/topics/security/', '/topics/politics/', '/topics/diplomacy/', '/topics/economy/', '/topics/society/', '/topics/environment/']
+# URL = 'https://thediplomat.com/regions/central-asia/'
 HEADERS = {'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'}
 HOST = 'https://thediplomat.com'
 FILE = 'thediplomat.csv'
@@ -12,7 +12,7 @@ FILE = 'thediplomat.csv'
 def save_file(items, path):
     with open(path, 'a', newline='') as file:
         writer = csv.writer(file, delimiter=';')
-        #writer.writerow(['text', 'title', 'host', 'link', 'owner', 'label'])
+        # writer.writerow(['text', 'title', 'host', 'link', 'owner', 'label'])
         for item in items:
             writer.writerow([item['text'], item['title'], item['host'], item['link'], item['owner'], item['label']])
 
@@ -58,12 +58,12 @@ def parse(url):
         pages_count = get_pages_count(html.text)
         for page in range(1, pages_count + 1):
             print(f'Парсинг страницы {page} из {pages_count}')
-            html = get_html(URL + f'page/{page}/')
+            html = get_html(url + f'page/{page}/')
             get_content(html.text)
             articles.extend(get_content(html.text))
             #print(articles)
         save_file(articles, FILE)
-        print(f'получено {len.articles} статей')
+        print(f'получено {len(articles)} статей')
     else:
         print('Error')
 
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     try:
         for topic in TOPICS:
             url = HOST + topic
-            parse(URL)
+            parse(url)
     except RemoteDisconnected:
         pass
