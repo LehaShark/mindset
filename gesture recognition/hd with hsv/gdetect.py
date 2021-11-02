@@ -42,17 +42,17 @@ class GestureDetect:
             contours, hierarchy = cv.findContours(mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
             # print(contours)
             # print(hierarchy)
-                # find contour of max area(hand)
+            # find contour of max area(hand)
             cnt = max(contours, key=lambda x: cv.contourArea(x))
 
-                # approx the contour a little
+            # approx the contour a little
             epsilon = 0.0005 * cv.arcLength(cnt, True)
             approx = cv.approxPolyDP(cnt, epsilon, True)
 
-                # make convex hull around hand
+            # make convex hull around hand
             hull = cv.convexHull(cnt)
 
-                # define area of hull and area of hand
+            # define area of hull and area of hand
             areahull = cv.contourArea(hull)
             areacnt = cv.contourArea(cnt)
 
@@ -133,7 +133,7 @@ class GestureDetect:
             else:
                 cv.putText(frame, 'reposition', (10, 50), font, 2, (0, 0, 255), 3, cv.LINE_AA)
 
-                # show the windows
+            # show the windows
 
             # viewImage(frame, 'frame')
             # viewImage(mask, 'mask')
